@@ -1,0 +1,15 @@
+version: v1.1.0
+steps:
+  - id: build-image
+    build: >
+      -f {{.Values.DOCKERFILE_PATH}} 
+      -t {{.Run.Registry}}/{{.Values.SOURCE_IMAGE}}:{{.Values.SOURCE_TAG}}
+      .
+  - id: retag-image
+    when: ['build-image']
+    cmd: docker tag {{.Run.Registry}}/{{.Values.SOURCE_IMAGE}}:{{.Values.SOURCE_TAG}} {{.Run.Registry}}/{{.Values.SOURCE_IMAGE}}:{{.Values.SOURCE_TAG}}-{{.Run.ID}}
+  - id: push-image
+    when: ['retag-image']
+    push: 
+    - "{{.Run.Registry}}/{{.Values.SOURCE_IMAGE}}:{{.Values.SOURCE_TAG}}"
+    - "{{.Run.Registry}}/{{.Values.SOURCE_IMAGE}}:{{.Values.SOURCE_TAG}}-{{.Run.ID}}"

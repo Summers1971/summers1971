@@ -1,0 +1,18 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- checkout: self
+  persistCredentials: true
+  clean: true
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'pscore'
+    scriptLocation: 'scriptPath'
+    arguments: "$(BaseContainerRegistryName) https://github.com/Summers1971/summers1971.git#main $(KeyVaultName) AZUREKEYVAULT"
+    scriptPath: './run.ps1'
+    failOnStandardError: true
